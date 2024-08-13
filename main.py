@@ -87,3 +87,7 @@ for emotion, timestamps in emotion_timestamps.items():
 # Release resources and close windows
 cap.release()
 cv2.destroyAllWindows()
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
