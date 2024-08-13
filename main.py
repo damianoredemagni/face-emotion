@@ -1,3 +1,5 @@
+import tensorflow as tf
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 import cv2
 import numpy as np
 from deepface import DeepFace
@@ -10,7 +12,6 @@ deepface = DeepFace.build_model("Emotion")
 # Load the video file
 cap = cv2.VideoCapture('test_face.mp4')
 # Define the face cascade classifier
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 # Create a dictionary to keep track of emotion counts
 emotion_counts = defaultdict(int)
@@ -22,11 +23,13 @@ emotion_threshold = 5  # This is a hypothetical threshold for detection spikes
 # Total number of detected faces
 total_faces = 0
 
-while True:
-    # Read a frame from the video file
-    ret, frame = cap.read()
-    if not ret:
-        break
+# And replace the face detection loop with:
+faces = DeepFace.extract_faces(frame, detector_backend='opencv')
+for face in faces:
+    if face['confidence'] > 0.9:  # You can adjust this threshold
+        face_roi = face['face']
+        try:
+            emotions = DeepFace.analyze(face_roi, actions=['emotion'], enforce_detection=False)
 
     # Get the current timestamp in HH:MM:SS format
     current_time = datetime.datetime.now().strftime("%H:%M:%S")
